@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PGCG</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+<div th:replace="fragments/menu :: menu"></div>
+
+<div class="contenedor">
+<h1>Propiedades</h1>
+<div class="mensaje ok" th:if="${ok}" th:text="${ok}"></div>
+<div class="mensaje error" th:if="${error}" th:text="${error}"></div>
+<form method="get" th:object="${formBusqueda}">
+<input type="text" th:field="*{direccion}" placeholder="Dirección">
+<select th:field="*{ciudadId}"><option value="">Ciudad</option><option th:each="c : ${ciudades}" th:value="${c.id}" th:text="${c.nombre}"></option></select>
+<select th:field="*{tipo}"><option value="">Tipo</option><option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option></select>
+<select th:field="*{estadoDisponibilidad}"><option value="">Estado</option><option th:each="e : ${estados}" th:value="${e}" th:text="${e}"></option></select>
+<button type="submit">Buscar</button><a class="boton" th:href="@{/propiedades/nuevo}">Nueva propiedad</a>
+</form>
+<table><tr><th>ID</th><th>Dirección</th><th>Ciudad</th><th>Tipo</th><th>Amb.</th><th>M2</th><th>Estado</th><th>Propietario</th><th>Acciones</th></tr>
+<tr th:each="p : ${lista}"><td th:text="${p.id}"></td><td th:text="${p.direccion}"></td><td th:text="${p.ciudad.nombre}"></td><td th:text="${p.tipo}"></td><td th:text="${p.cantidadAmbientes}"></td><td th:text="${p.metrosCuadrados}"></td><td th:text="${p.estadoDisponibilidad}"></td><td th:text="${p.propietario.nombreCompleto}"></td><td><a class="boton" th:href="@{/propiedades/editar/{id}(id=${p.id})}">Editar</a><form th:action="@{/propiedades/eliminar/{id}(id=${p.id})}" method="post" style="display:inline;"><button type="submit">Eliminar</button></form></td></tr>
+</table></div>
+
+</body>
+</html>

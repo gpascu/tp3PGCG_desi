@@ -1,0 +1,12 @@
+body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; }
+.menu { background: #1e3a8a; padding: 15px; }
+.menu a { color: white; text-decoration: none; margin-right: 15px; font-weight: bold; }
+.contenedor { width: 92%; margin: 20px auto; background: white; padding: 20px; }
+input, select, textarea, button { margin: 5px 5px 10px 0; padding: 8px; }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+.mensaje { padding: 10px; margin-bottom: 10px; }
+.ok { background: #d1fae5; }
+.error { background: #fee2e2; }
+.boton { display: inline-block; background: #dbeafe; text-decoration: none; color: black; border: 1px solid #999; padding: 8px; }
+textarea { width: 100%; height: 90px; }
