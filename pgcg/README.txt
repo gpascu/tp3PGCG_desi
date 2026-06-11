@@ -8,4 +8,4 @@ Paquetes principales:
 - com.pgcg.servicios
 
 Pagina principal
-Pagina de propiedades
+Pagina de propiedades con menu
