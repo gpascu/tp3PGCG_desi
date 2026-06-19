@@ -1,5 +1,6 @@
 package com.pgcg.servicios;
 
+import com.pgcg.entidades.EstadoPublicacion;
 import com.pgcg.entidades.Publicacion;
 import com.pgcg.accesoDatos.IPublicacionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,4 +12,6 @@ public interface PublicacionService {
     Publicacion guardar(Publicacion publicacion);
     Publicacion buscarPorId(Long id);
     void eliminar(Long id);
+	List<Publicacion> buscarConFiltros(Long id, EstadoPublicacion estado);
+	
 }

@@ -3,59 +3,54 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>PGCG - Listado de Publicaciones</title>
+    <title>PGCG</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 
 <body>
-    <div th:replace="fragments/menu :: menu"></div>
+<div th:replace="fragments/menu :: menu"></div>
 
-    <div class="contenedor" style="max-width: 90%; margin-top: 30px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h1>Gestión de Publicaciones</h1>
-            <a th:href="@{/publicaciones/nuevo}" class="boton" style="text-decoration: none;">Nueva Publicación</a>
-        </div>
-        
-        <div class="mensaje error" th:if="${error}" th:text="${error}"></div>
+<div class="contenedor">
+<h1>Publicaciones</h1>
+<div class="mensaje ok" th:if="${ok}" th:text="${ok}"></div>
+<div class="mensaje error" th:if="${error}" th:text="${error}"></div>
 
-        <table class="tabla" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-            <thead>
-                <tr style="background-color: #f2f2f2; text-align: left;">
-                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">ID</th>
-                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Descripción</th>
-                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Fecha Publicación</th>
-                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Precio Mensual</th>
-                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Estado</th>
-                    <th style="padding: 12px; border-bottom: 2px solid #ddd; text-align: center;">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="pub : ${listaPublicaciones}" style="border-bottom: 1px solid #ddd;">
-                    <td th:text="${pub.id}" style="padding: 12px;"></td>
-                    <td th:text="${pub.descripcion}" style="padding: 12px;"></td>
-                    <td th:text="${pub.fechaPublicacion != null} ? ${#temporals.format(pub.fechaPublicacion, 'dd/MM/yyyy')} : '-'" style="padding: 12px;"></td>
-                    <td th:text="${'$ ' + pub.precioMensual}" style="padding: 12px;"></td>
-                    <td style="padding: 12px;">
-                        <span th:text="${pub.estado}" 
-                              th:style="'font-weight: bold; color: ' + (${pub.estado.name() == 'ACTIVA'} ? 'green' : (${pub.estado.name() == 'PAUSADA'} ? 'orange' : 'red'))">
-                        </span>
-                    </td>
-                    <td style="padding: 12px; text-align: center;">
-                        <a th:href="@{/publicaciones/eliminar/{id}(id=${pub.id})}" 
-                           class="boton" 
-                           style="background-color: #d9534f; padding: 5px 10px; font-size: 0.85em; text-decoration: none;"
-                           onclick="return confirm('¿Está seguro de dar de baja esta publicación?');">
-                           Dar de Baja
-                        </a>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(listaPublicaciones)}">
-                    <td colspan="6" style="text-align: center; padding: 20px; color: #777; font-style: italic;">
-                        No se encontraron publicaciones registradas en el sistema.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+<form method="get" th:object="${formBusqueda}">
+    <input type="number" th:field="*{id}" placeholder="ID">
+    
+    <select th:field="*{estado}">
+        <option value="">Estado</option>
+        <option th:each="e : ${estados}" th:value="${e}" th:text="${e}"></option>
+    </select>
+    
+    <button type="submit">Buscar</button>
+    <a class="boton" th:href="@{/publicaciones/nuevo}">Nueva publicación</a>
+</form>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Propiedad (Dirección)</th>
+        <th>Fecha Pub.</th>
+        <th>Precio Mensual</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+    </tr>
+    <tr th:each="p : ${lista}">
+        <td th:text="${p.id}"></td>
+        <td th:text="${p.propiedad != null ? p.propiedad.direccion : '-'}"></td>
+        <td th:text="${p.fechaPublicacion != null} ? ${#temporals.format(p.fechaPublicacion, 'dd/MM/yyyy')} : '-'"></td>
+        <td th:text="${'$ ' + p.precioMensual}"></td>
+        <td th:text="${p.estado}"></td>
+        <td>
+            <form th:action="@{/publicaciones/eliminar/{id}(id=${p.id})}" method="post" style="display:inline;"
+                  onclick="return confirm('¿Está seguro de dar de baja esta publicación?');">
+                <button type="submit">Eliminar</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</div>
+
 </body>
 </html>

@@ -1,5 +1,7 @@
 package com.pgcg.accesoDatos;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +15,14 @@ public interface IPublicacionRepo extends JpaRepository<Publicacion, Long> {
 		return null;
 	}
 
-	static boolean existsByPropiedadIdAndEstadoAndEliminadaFalse(Long propiedadId, EstadoPublicacion activa) {
+	static boolean existsByPublicacionIdAndEstadoAndEliminadaFalse(Long publicaciondId, EstadoPublicacion activa) {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	static List<Publicacion> findByEstado(EstadoPublicacion estado) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }
