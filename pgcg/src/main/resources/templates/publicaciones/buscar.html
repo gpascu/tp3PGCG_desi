@@ -1,48 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <title>Listado de Publicaciones</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>PGCG - Listado de Publicaciones</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
-<body class="container mt-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Gestión de Publicaciones Activas</h2>
-        <a th:href="@{/publicaciones/nuevo}" class="btn btn-primary">Nueva Publicación</a>
+<body>
+    <div th:replace="fragments/menu :: menu"></div>
+
+    <div class="contenedor" style="max-width: 90%; margin-top: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>Gestión de Publicaciones</h1>
+            <a th:href="@{/publicaciones/nuevo}" class="boton" style="text-decoration: none;">Nueva Publicación</a>
+        </div>
+        
+        <div class="mensaje error" th:if="${error}" th:text="${error}"></div>
+
+        <table class="tabla" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <thead>
+                <tr style="background-color: #f2f2f2; text-align: left;">
+                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">ID</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Descripción</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Fecha Publicación</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Precio Mensual</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Estado</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #ddd; text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="pub : ${listaPublicaciones}" style="border-bottom: 1px solid #ddd;">
+                    <td th:text="${pub.id}" style="padding: 12px;"></td>
+                    <td th:text="${pub.descripcion}" style="padding: 12px;"></td>
+                    <td th:text="${pub.fechaPublicacion != null} ? ${#temporals.format(pub.fechaPublicacion, 'dd/MM/yyyy')} : '-'" style="padding: 12px;"></td>
+                    <td th:text="${'$ ' + pub.precioMensual}" style="padding: 12px;"></td>
+                    <td style="padding: 12px;">
+                        <span th:text="${pub.estado}" 
+                              th:style="'font-weight: bold; color: ' + (${pub.estado.name() == 'ACTIVA'} ? 'green' : (${pub.estado.name() == 'PAUSADA'} ? 'orange' : 'red'))">
+                        </span>
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <a th:href="@{/publicaciones/eliminar/{id}(id=${pub.id})}" 
+                           class="boton" 
+                           style="background-color: #d9534f; padding: 5px 10px; font-size: 0.85em; text-decoration: none;"
+                           onclick="return confirm('¿Está seguro de dar de baja esta publicación?');">
+                           Dar de Baja
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(listaPublicaciones)}">
+                    <td colspan="6" style="text-align: center; padding: 20px; color: #777; font-style: italic;">
+                        No se encontraron publicaciones registradas en el sistema.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Título</th>
-                <th>Descripción</th>
-                <th>Precio Mensual</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="pub : ${listaPublicaciones}">
-                <td th:text="${pub.id}"></td>
-                <td th:text="${pub.titulo}"></td>
-                <td th:text="${pub.descripcion}"></td>
-                <td th:text="${'$' + pub.precioMensual}"></td>
-                <td>
-                    <a th:href="@{/publicaciones/eliminar/{id}(id=${pub.id})}" 
-                       class="btn btn-danger btn-sm" 
-                       onclick="return confirm('¿Está seguro de dar de baja esta publicación?');">
-                       Dar de Baja
-                    </a>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(listaPublicaciones)}">
-                <td colspan="5" class="text-center text-muted">No hay publicaciones activas registradas.</td>
-            </tr>
-        </tbody>
-    </table>
-
 </body>
 </html>
