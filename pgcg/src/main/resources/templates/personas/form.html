@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PGCG Inmobiliaria</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+    <div th:replace="fragments/menu :: menu"></div>
+
+    <div class="contenedor">
+
+        <h1>Formulario de Persona</h1>
+
+        <div class="mensaje error"
+             th:if="${error}"
+             th:text="${error}">
+        </div>
+
+        <form th:action="${form.id == null} ? @{/personas/guardar} : @{/personas/editar}"
+              th:object="${form}"
+              method="post">
+
+            <input type="hidden"
+                   th:field="*{id}">
+
+            <div th:if="${form.id != null}">
+
+                <label>Identificador</label>
+
+                <input type="text"
+                       th:value="${form.id}"
+                       readonly>
+
+            </div>
+
+            <label>Nombre</label>
+
+            <input type="text"
+                   th:field="*{nombre}">
+
+            <div class="mensaje error"
+                 th:if="${#fields.hasErrors('nombre')}"
+                 th:errors="*{nombre}">
+            </div>
+
+            <label>Apellido</label>
+
+            <input type="text"
+                   th:field="*{apellido}">
+
+            <div class="mensaje error"
+                 th:if="${#fields.hasErrors('apellido')}"
+                 th:errors="*{apellido}">
+            </div>
+
+            <label>DNI/CUIT</label>
+
+            <input type="text"
+                   th:field="*{dniCuit}">
+
+            <div class="mensaje error"
+                 th:if="${#fields.hasErrors('dniCuit')}"
+                 th:errors="*{dniCuit}">
+            </div>
+
+            <label>Teléfono</label>
+
+            <input type="text"
+                   th:field="*{telefono}">
+
+            <div class="mensaje error"
+                 th:if="${#fields.hasErrors('telefono')}"
+                 th:errors="*{telefono}">
+            </div>
+
+            <label>Email</label>
+
+            <input type="text"
+                   th:field="*{email}">
+
+            <div class="mensaje error"
+                 th:if="${#fields.hasErrors('email')}"
+                 th:errors="*{email}">
+            </div>
+
+            <label>Domicilio</label>
+
+            <input type="text"
+                   th:field="*{domicilio}">
+
+            <div class="mensaje error"
+                 th:if="${#fields.hasErrors('domicilio')}"
+                 th:errors="*{domicilio}">
+            </div>
+
+            <label>Ciudad</label>
+
+            <select th:field="*{ciudadId}">
+
+                <option value="">
+                    Seleccione una ciudad
+                </option>
+
+                <option th:each="c : ${ciudades}"
+                        th:value="${c.id}"
+                        th:text="${c.nombre}">
+                </option>
+
+            </select>
+
+            <div class="mensaje error"
+                 th:if="${#fields.hasErrors('ciudadId')}"
+                 th:errors="*{ciudadId}">
+            </div>
+
+            <div class="acciones-form">
+
+                <button type="submit">
+                    Guardar
+                </button>
+
+                <a class="boton"
+                   th:href="@{/personas}">
+                    Volver
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>

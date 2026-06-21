@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PGCG Inmobiliaria</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+    <div th:replace="fragments/menu :: menu"></div>
+
+    <div class="contenedor">
+
+        <h1>Personas</h1>
+
+        <div class="mensaje ok"
+             th:if="${ok}"
+             th:text="${ok}">
+        </div>
+
+        <div class="mensaje error"
+             th:if="${error}"
+             th:text="${error}">
+        </div>
+
+        <form method="get"
+              th:object="${formBusqueda}">
+
+            <input type="text"
+                   th:field="*{nombreApellido}"
+                   placeholder="Nombre o apellido">
+
+            <select th:field="*{ciudadId}">
+
+                <option value="">
+                    Ciudad
+                </option>
+
+                <option th:each="c : ${ciudades}"
+                        th:value="${c.id}"
+                        th:text="${c.nombre}">
+                </option>
+
+            </select>
+
+            <button type="submit">
+                Buscar
+            </button>
+
+            <a class="boton nuevoItem"
+               th:href="@{/personas/nuevo}">
+                Nueva persona
+            </a>
+
+        </form>
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>DNI/CUIT</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th>Domicilio</th>
+                    <th>Ciudad</th>
+                    <th>Acciones</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr th:each="p : ${lista}">
+
+                    <td th:text="${p.id}"></td>
+
+                    <td th:text="${p.nombre}"></td>
+
+                    <td th:text="${p.apellido}"></td>
+
+                    <td th:text="${p.dniCuit}"></td>
+
+                    <td th:text="${p.telefono}"></td>
+
+                    <td th:text="${p.email}"></td>
+
+                    <td th:text="${p.domicilio}"></td>
+
+                    <td th:text="${p.ciudad.nombre}"></td>
+
+                    <td>
+
+                        <div class="acciones">
+
+                            <div class="accion-item">
+
+                                <a class="boton boton-editar"
+                                   th:href="@{/personas/editar/{id}(id=${p.id})}">
+                                    Editar
+                                </a>
+
+                            </div>
+
+                            <div class="accion-item">
+
+                                <form th:action="@{/personas/eliminar/{id}(id=${p.id})}"
+                                      method="post">
+
+                                    <button type="submit"
+                                            class="boton-eliminar">
+                                        Eliminar
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</body>
+
+</html>

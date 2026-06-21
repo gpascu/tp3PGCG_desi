@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PGCG Inmobiliaria</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+<div th:replace="fragments/menu :: menu"></div>
+
+<section class="hero-home">
+
+    <div class="hero-card">
+
+        <div class="hero-logo">
+            🏠
+        </div>
+
+        <h1 class="titulo-home">PGCG Inmobiliaria</h1>
+
+        <p class="subtitulo-home">
+            Sistema integral para la gestión de propiedades, publicaciones,
+            contratos y facturación.
+        </p>
+
+        <div class="separador"></div>
+
+        <h2 class="titulo-seccion">
+            Datos Maestros
+        </h2>
+
+        <p class="descripcion-seccion">
+            Administración de las entidades principales del sistema.
+        </p>
+
+        <div class="cards-home">
+
+            <a th:href="@{/provincias}" class="card-home">
+                <div class="icono-card">📍</div>
+                <h3>Provincias</h3>
+                <p>Gestión de provincias registradas.</p>
+            </a>
+
+            <a th:href="@{/ciudades}" class="card-home">
+                <div class="icono-card">🏙️</div>
+                <h3>Ciudades</h3>
+                <p>Administración de ciudades y localidades.</p>
+            </a>
+
+            <a th:href="@{/personas}" class="card-home">
+                <div class="icono-card">👤</div>
+                <h3>Personas</h3>
+                <p>Propietarios, inquilinos y usuarios.</p>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+</body>
+
+</html>

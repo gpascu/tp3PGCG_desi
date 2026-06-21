@@ -21,7 +21,7 @@ public class PropiedadesBuscarController {
     @GetMapping
     public String buscar(@ModelAttribute("formBusqueda") PropiedadesBuscarForm form, Model model) {
         model.addAttribute("lista", propiedadService.buscar(form.getDireccion(), form.getCiudadId(), form.getTipo(), form.getEstadoDisponibilidad()));
-        model.addAttribute("ciudades", ciudadService.listarTodas());
+        model.addAttribute("ciudades", ciudadService.listarActivas());
         model.addAttribute("tipos", TipoPropiedad.values());
         model.addAttribute("estados", EstadoDisponibilidad.values());
         return "propiedades/lista";

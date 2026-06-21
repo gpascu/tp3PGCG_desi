@@ -103,10 +103,8 @@ public class PropiedadServiceImpl implements PropiedadService {
         if (propiedad.getTipo() == null) throw new Excepcion("Debe seleccionar un tipo", "tipo");
         if (propiedad.getCantidadAmbientes() == null || propiedad.getCantidadAmbientes() <= 0) throw new Excepcion("La cantidad de ambientes debe ser positiva", "cantidadAmbientes");
         if (propiedad.getMetrosCuadrados() == null || propiedad.getMetrosCuadrados() <= 0) throw new Excepcion("Los metros cuadrados deben ser positivos", "metrosCuadrados");
-        if (propiedad.getDescripcion() == null || propiedad.getDescripcion().trim().isEmpty())
-            throw new Excepcion("La descripción es obligatoria", "descripcion");
-        if (propietarioId == null)
-            throw new Excepcion("Debe seleccionar un propietario", "propietarioId");
+        if (propiedad.getDescripcion() == null || propiedad.getDescripcion().trim().isEmpty()) throw new Excepcion("La descripción es obligatoria", "descripcion");
+        if (propietarioId == null) throw new Excepcion("Debe seleccionar un propietario", "propietarioId");
         if (ciudadId == null) throw new Excepcion("Debe seleccionar una ciudad", "ciudadId");
         Persona propietario = personaRepo.findById(propietarioId).orElse(null);
         if (propietario == null || Boolean.TRUE.equals(propietario.getEliminada())) throw new Excepcion("Debe seleccionar un propietario válido", "propietarioId");
