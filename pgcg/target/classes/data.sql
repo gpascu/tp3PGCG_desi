@@ -13,8 +13,8 @@ DELETE FROM persona;
 DELETE FROM ciudad;
 DELETE FROM provincia;
 
-INSERT INTO provincia (id, nombre) VALUES (1, 'Buenos Aires'), (2, 'Cordoba');
-INSERT INTO ciudad (id, nombre, provincia_id) VALUES (1, 'La Plata', 1), (2, 'Mar del Plata', 1), (3, 'Cordoba Capital', 2);
+INSERT INTO provincia (id, nombre, eliminada) VALUES (1, 'Buenos Aires', false), (2, 'Cordoba', false);
+INSERT INTO ciudad (id, nombre, provincia_id, eliminada) VALUES (1, 'La Plata', 1, false), (2, 'Mar del Plata', 1, false), (3, 'Cordoba Capital', 2, false);
 INSERT INTO persona (id, nombre, apellido, dni_cuit, telefono, email, domicilio, eliminada, ciudad_id) VALUES
 (1, 'Ana', 'Lopez', '20111111112', '111111', 'ana@mail.com', 'Calle 1', false, 1),
 (2, 'Carlos', 'Perez', '20222222223', '222222', 'carlos@mail.com', 'Calle 2', false, 2),

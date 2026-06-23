@@ -97,7 +97,7 @@ public class PropiedadRegistrarEditarController {
 
     private void cargarCombos(Model model) {
         model.addAttribute("personas", personaService.listarActivas());
-        model.addAttribute("ciudades", ciudadService.listarTodas());
+        model.addAttribute("ciudades", ciudadService.listarActivas());
         model.addAttribute("tipos", TipoPropiedad.values());
         model.addAttribute("estados", EstadoDisponibilidad.values());
     }
