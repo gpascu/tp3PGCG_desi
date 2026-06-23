@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -92,34 +93,34 @@ public class PublicacionServiceImpl implements PublicacionService {
 	    publicacionRepo.save(publicacion);
 	}
 
+	@Override
 	public List<Publicacion> buscarConFiltros(Long id, EstadoPublicacion estado) {
-	    //  busca por ID
-	    if (id != null) {
-	        try {
-	            return publicacionRepo.findById(id)
-	                    .map(p -> List.of(p)) 
-	                    .orElse(List.of());
-	        } catch (Exception e) {
-	            // Si hay un error de base de datos, lo imprime y retorna una lista vacía 
-	            e.printStackTrace();
-	            return List.of(); 
+	    List<Publicacion> todas = publicacionRepo.findAll(); 
+	    List<Publicacion> resultado = new ArrayList<Publicacion>();
+	    if (todas == null) {
+	        return resultado;
+	    }
+
+	    for (Publicacion p : todas) {
+	        boolean cumple = true;
+	        
+	        // Filtro por ID
+	        if (id != null && (p.getId() == null || !p.getId().equals(id))) {
+	            cumple = false;
+	        }
+	        
+	        // Filtro por Estado
+	        if (estado != null && p.getEstado() != estado) {
+	            cumple = false;
+	        }
+
+	        // Si paso todos los filtros activos se agrega al resultado
+	        if (cumple) {
+	            resultado.add(p);
 	        }
 	    }
 	    
-	    // filtra por estado --> ESTO NO ME FUNCIONA. Guille, lo podes mirar y comparar con el tuyo?
-	    if (estado != null) {
-	        //LÍNEAS PARA DEPURAR:
-	        System.out.println("=== DEBBUGIN: Buscando en la BD publicaciones con estado: " + estado);
-	        
-	        List<Publicacion> resultadoBD = IPublicacionRepo.findByEstado(estado);
-	        
-	        System.out.println("=== DEBBUGIN: La base de datos devolvió: " + resultadoBD.size() + " registros.");
-	        
-	        return resultadoBD; 
-	    }
-	    
-	    // 3. Si apretó "Buscar" con todos los filtros vacíos, trae absolutamente todo
-	    return publicacionRepo.findAll();
+	    return resultado;
 	}
    
 }

@@ -20,9 +20,6 @@ public interface IPublicacionRepo extends JpaRepository<Publicacion, Long> {
 		return false;
 	}
 
-	static List<Publicacion> findByEstado(EstadoPublicacion estado) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+
+
 }
