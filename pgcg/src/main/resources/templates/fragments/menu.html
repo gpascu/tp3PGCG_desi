@@ -1,13 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<div th:fragment="menu">
-    <div class="menu">
-		<a th:href="@{/}">Inicio</a>
-        <a th:href="@{/propiedades}">Propiedades</a>
-        <a th:href="@{/facturas}">Facturas</a>
 
-    </div>
+<div th:fragment="menu">
+
+    <nav class="menu">
+
+        <a th:href="@{/}" class="logo-home">
+            <img th:src="@{/img/iconoHome.png}" alt="Home" class="icono">
+        </a>
+
+        <button class="hamburger" id="hamburgerBtn">
+            ☰
+        </button>
+
+        <div class="menu-links" id="menuLinks">
+            <a th:href="@{/propiedades}">Propiedades</a>
+            <a th:href="@{/publicaciones}">Publicaciones</a>
+            <a th:href="@{/contratos}">Contratos</a>
+            <a th:href="@{/facturas}">Facturas</a>
+        </div>
+
+    </nav>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const btn = document.getElementById("hamburgerBtn");
+            const menu = document.getElementById("menuLinks");
+
+            btn.addEventListener("click", function() {
+                menu.classList.toggle("activo");
+            });
+
+        });
+    </script>
+
 </div>
+
 </body>
 </html>
