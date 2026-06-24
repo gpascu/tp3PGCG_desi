@@ -7,7 +7,7 @@ import com.pgcg.entidades.*;
 public class FacturaForm {
     private Long id;
     private Long contratoId;
-    private String conceptoFacturado;
+    private String periodoFacturado;
     private LocalDate fechaEmision;
     private LocalDate fechaVencimiento;
     private BigDecimal importe;
@@ -16,14 +16,13 @@ public class FacturaForm {
     private LocalDate fechaPago;
     private MedioPago medio;
     private BigDecimal importePagado;
-    private BigDecimal interes;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Long getContratoId() { return contratoId; }
     public void setContratoId(Long contratoId) { this.contratoId = contratoId; }
-    public String getConceptoFacturado() { return conceptoFacturado; }
-    public void setConceptoFacturado(String conceptoFacturado) { this.conceptoFacturado = conceptoFacturado; }
+    public String getPeriodoFacturado() { return periodoFacturado; }
+    public void setPeriodoFacturado(String periodoFacturado) { this.periodoFacturado = periodoFacturado; }
     public LocalDate getFechaEmision() { return fechaEmision; }
     public void setFechaEmision(LocalDate fechaEmision) { this.fechaEmision = fechaEmision; }
     public LocalDate getFechaVencimiento() { return fechaVencimiento; }
@@ -38,6 +37,4 @@ public class FacturaForm {
     public void setMedio(MedioPago medio) { this.medio = medio; }
     public BigDecimal getImportePagado() { return importePagado; }
     public void setImportePagado(BigDecimal importePagado) { this.importePagado = importePagado; }
-    public BigDecimal getInteres() { return interes; }
-    public void setInteres(BigDecimal interes) { this.interes = interes; }
 }

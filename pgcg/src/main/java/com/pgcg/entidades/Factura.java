@@ -19,8 +19,7 @@ public class Factura {
     @Enumerated(EnumType.STRING)
     private MedioPago medio;
     private BigDecimal importePagado;
-    private BigDecimal interes;
-    private String conceptoFacturado;
+    private String periodoFacturado;
     @ManyToOne
     private Contrato contrato;
     public Long getId() { return id; }
@@ -41,10 +40,8 @@ public class Factura {
     public void setMedio(MedioPago medio) { this.medio = medio; }
     public BigDecimal getImportePagado() { return importePagado; }
     public void setImportePagado(BigDecimal importePagado) { this.importePagado = importePagado; }
-    public BigDecimal getInteres() { return interes; }
-    public void setInteres(BigDecimal interes) { this.interes = interes; }
-    public String getConceptoFacturado() { return conceptoFacturado; }
-    public void setConceptoFacturado(String conceptoFacturado) { this.conceptoFacturado = conceptoFacturado; }
+    public String getPeriodoFacturado() { return periodoFacturado; }
+    public void setPeriodoFacturado(String periodoFacturado) { this.periodoFacturado = periodoFacturado; }
     public Contrato getContrato() { return contrato; }
     public void setContrato(Contrato contrato) { this.contrato = contrato; }
 }

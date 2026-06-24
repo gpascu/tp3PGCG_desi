@@ -1,13 +1,11 @@
 package com.pgcg.servicios;
 
-import java.time.LocalDate;
 import java.util.List;
 import com.pgcg.entidades.*;
 import com.pgcg.excepciones.Excepcion;
 
 public interface FacturaService {
-    List<Factura> buscar(Long contratoId, Long propiedadId, Long inquilinoId, EstadoFactura estado,
-                         LocalDate vencimientoDesde, LocalDate vencimientoHasta);
+    List<Factura> buscar(Long contratoId, String periodoFacturado, EstadoFactura estado);
     Factura buscarPorId(Long id);
     List<Contrato> listarContratosFacturables();
     List<Contrato> listarContratos();

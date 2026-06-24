@@ -30,7 +30,7 @@ public class FacturaRegistrarEditarController {
         FacturaForm form = new FacturaForm();
         form.setId(f.getId());
         form.setContratoId(f.getContrato() != null ? f.getContrato().getId() : null);
-        form.setConceptoFacturado(f.getConceptoFacturado());
+        form.setPeriodoFacturado(f.getPeriodoFacturado());
         form.setFechaEmision(f.getFechaEmision());
         form.setFechaVencimiento(f.getFechaVencimiento());
         form.setImporte(f.getImporte());
@@ -38,7 +38,6 @@ public class FacturaRegistrarEditarController {
         form.setFechaPago(f.getFechaPago());
         form.setMedio(f.getMedio());
         form.setImportePagado(f.getImportePagado());
-        form.setInteres(f.getInteres());
         model.addAttribute("form", form);
         model.addAttribute("contratoActual", f.getContrato());
         cargarCombos(model);
@@ -86,7 +85,7 @@ public class FacturaRegistrarEditarController {
     private Factura aEntidad(FacturaForm form) {
         Factura f = new Factura();
         f.setId(form.getId());
-        f.setConceptoFacturado(form.getConceptoFacturado());
+        f.setPeriodoFacturado(form.getPeriodoFacturado());
         f.setFechaEmision(form.getFechaEmision());
         f.setFechaVencimiento(form.getFechaVencimiento());
         f.setImporte(form.getImporte());
@@ -94,7 +93,6 @@ public class FacturaRegistrarEditarController {
         f.setFechaPago(form.getFechaPago());
         f.setMedio(form.getMedio());
         f.setImportePagado(form.getImportePagado());
-        f.setInteres(form.getInteres());
         return f;
     }
 

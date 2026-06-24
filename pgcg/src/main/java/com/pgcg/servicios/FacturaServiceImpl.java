@@ -1,7 +1,6 @@
 package com.pgcg.servicios;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,19 +19,16 @@ public class FacturaServiceImpl implements FacturaService {
     @Autowired private IContratoRepo contratoRepo;
     @Autowired private IHistorialEstadoFacturaRepo historialRepo;
 
-    public List<Factura> buscar(Long contratoId, Long propiedadId, Long inquilinoId, EstadoFactura estado,
-                               LocalDate vencimientoDesde, LocalDate vencimientoHasta) {
+    public List<Factura> buscar(Long contratoId, String periodoFacturado, EstadoFactura estado) {
         List<Factura> todas = facturaRepo.findByEliminadaFalseOrderByIdAsc();
         List<Factura> resultado = new ArrayList<Factura>();
+        String periodo = (periodoFacturado == null || periodoFacturado.trim().isEmpty()) ? null : periodoFacturado.trim();
         for (Factura f : todas) {
             boolean cumple = true;
             Contrato c = f.getContrato();
             if (contratoId != null && (c == null || !c.getId().equals(contratoId))) cumple = false;
-            if (propiedadId != null && (c == null || c.getPropiedad() == null || !c.getPropiedad().getId().equals(propiedadId))) cumple = false;
-            if (inquilinoId != null && (c == null || c.getInquilino() == null || !c.getInquilino().getId().equals(inquilinoId))) cumple = false;
+            if (periodo != null && !periodo.equals(f.getPeriodoFacturado())) cumple = false;
             if (estado != null && f.getEstado() != estado) cumple = false;
-            if (vencimientoDesde != null && (f.getFechaVencimiento() == null || f.getFechaVencimiento().isBefore(vencimientoDesde))) cumple = false;
-            if (vencimientoHasta != null && (f.getFechaVencimiento() == null || f.getFechaVencimiento().isAfter(vencimientoHasta))) cumple = false;
             if (cumple) resultado.add(f);
         }
         return resultado;
@@ -84,7 +80,7 @@ public class FacturaServiceImpl implements FacturaService {
 
         EstadoFactura anterior = actual.getEstado();
         // El contrato asociado no se puede modificar: se conserva el original
-        actual.setConceptoFacturado(factura.getConceptoFacturado());
+        actual.setPeriodoFacturado(factura.getPeriodoFacturado());
         actual.setFechaEmision(factura.getFechaEmision());
         actual.setFechaVencimiento(factura.getFechaVencimiento());
         actual.setImporte(factura.getImporte());
@@ -92,7 +88,6 @@ public class FacturaServiceImpl implements FacturaService {
         actual.setFechaPago(factura.getFechaPago());
         actual.setMedio(factura.getMedio());
         actual.setImportePagado(factura.getImportePagado());
-        actual.setInteres(factura.getInteres());
         Factura guardada = facturaRepo.save(actual);
         if (anterior != guardada.getEstado()) guardarHistorial(guardada, guardada.getEstado());
     }
@@ -107,8 +102,10 @@ public class FacturaServiceImpl implements FacturaService {
     }
 
     private void validarDatosGenerales(Factura f) throws Excepcion {
-        if (f.getConceptoFacturado() == null || f.getConceptoFacturado().trim().isEmpty())
-            throw new Excepcion("El concepto facturado es obligatorio", "conceptoFacturado");
+        if (f.getPeriodoFacturado() == null || f.getPeriodoFacturado().trim().isEmpty())
+            throw new Excepcion("El período facturado es obligatorio", "periodoFacturado");
+        if (!f.getPeriodoFacturado().matches("\\d{4}-(0[1-9]|1[0-2])"))
+            throw new Excepcion("El período facturado debe tener formato AAAA-MM", "periodoFacturado");
         if (f.getFechaEmision() == null) throw new Excepcion("La fecha de emisión es obligatoria", "fechaEmision");
         if (f.getFechaVencimiento() == null) throw new Excepcion("La fecha de vencimiento es obligatoria", "fechaVencimiento");
         if (f.getFechaVencimiento().isBefore(f.getFechaEmision()))
@@ -126,11 +123,9 @@ public class FacturaServiceImpl implements FacturaService {
             if (f.getMedio() == null) throw new Excepcion("Debe indicar el medio de pago", "medio");
             if (f.getImportePagado() == null || f.getImportePagado().compareTo(BigDecimal.ZERO) <= 0)
                 throw new Excepcion("El importe pagado debe ser positivo", "importePagado");
-            if (f.getInteres() != null && f.getInteres().compareTo(BigDecimal.ZERO) < 0)
-                throw new Excepcion("El interés no puede ser negativo", "interes");
         } else {
             // Si no está pagada, los datos de pago deben estar vacíos
-            if (f.getFechaPago() != null || f.getMedio() != null || f.getImportePagado() != null || f.getInteres() != null) {
+            if (f.getFechaPago() != null || f.getMedio() != null || f.getImportePagado() != null) {
                 throw new Excepcion("Solo una factura pagada puede tener datos de pago");
             }
         }
