@@ -9,7 +9,7 @@ public class ContratoBuscarForm {
     private Long inquilinoId;
     private EstadoContrato estado;
 
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaInicio;
 
     public Long getPropiedadId() {

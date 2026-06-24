@@ -72,46 +72,26 @@ public class ContratoServiceImpl implements ContratoService {
 
     @Override
     public Contrato guardar(Contrato contrato) throws Excepcion {
-        EstadoContrato estadoActual = null;
-        if (contrato.getId() != null) {
-            Contrato existente = repo.findById(contrato.getId()).orElse(null);
-            if (existente != null) {
-                estadoActual = existente.getEstado();
-            }
-        }
-
         if (contrato.getEstado() == EstadoContrato.BORRADOR) {
-            if (estadoActual != null) {
-                validarTransicion(estadoActual, EstadoContrato.ACTIVO);
-            }
+            Contrato guardado = repo.save(contrato);
+            guardarHistorial(guardado, EstadoContrato.BORRADOR);
+            return guardado;
+        } else if (contrato.getEstado() == EstadoContrato.ACTIVO) {
             if (tieneOtroContratoActivo(contrato.getPropiedad().getId(), contrato.getId())) {
                 throw new Excepcion(
                         "No se puede activar el contrato porque ya existe otro contrato activo para esta propiedad.");
             }
             if (contrato.getPropiedad().getEstadoDisponibilidad() == EstadoDisponibilidad.DISPONIBLE) {
                 propiedadService.cambiarEstadoDesdeContrato(contrato.getPropiedad(), EstadoDisponibilidad.ALQUILADA);
-                contrato.setEstado(EstadoContrato.ACTIVO);
                 Contrato guardado = repo.save(contrato);
                 guardarHistorial(guardado, EstadoContrato.ACTIVO);
                 return guardado;
             } else {
-                throw new Excepcion("No se puede guardar el contrato. Propiedad no disponible.");
-            }
-        } else if (contrato.getEstado() == EstadoContrato.ACTIVO) {
-            if (estadoActual != null) {
-                validarTransicion(estadoActual, EstadoContrato.FINALIZADO);
-            }
-            if (contrato.getPropiedad().getEstadoDisponibilidad() == EstadoDisponibilidad.ALQUILADA) {
-                propiedadService.cambiarEstadoDesdeContrato(contrato.getPropiedad(), EstadoDisponibilidad.DISPONIBLE);
-                contrato.setEstado(EstadoContrato.FINALIZADO);
-                Contrato guardado = repo.save(contrato);
-                guardarHistorial(guardado, EstadoContrato.FINALIZADO);
-                return guardado;
-            } else {
-                throw new Excepcion("No se puede guardar el contrato. Propiedad no alquilada.");
+                throw new Excepcion(
+                        "No se puede guardar el contrato en estado ACTIVO. La propiedad no está disponible.");
             }
         } else {
-            throw new Excepcion("No se puede guardar el contrato. Estado inválido.");
+            throw new Excepcion("No se puede guardar un nuevo contrato con estado " + contrato.getEstado() + ".");
         }
     }
 
@@ -124,11 +104,11 @@ public class ContratoServiceImpl implements ContratoService {
     public boolean eliminar(Long id) throws Excepcion {
         Contrato existente = repo.findById(id).orElse(null);
         if (existente == null) {
-            throw new Excepcion("No se encontró el contrato a eliminar.");
+            throw new Excepcion("Contrato no encontrado.");
         }
         if (existente.getEstado() != EstadoContrato.BORRADOR) {
             throw new Excepcion(
-                    "No se puede eliminar el contrato. Solo los contratos en estado BORRADOR pueden ser eliminados.");
+                    "Solo se pueden eliminar los contratos en estado 'BORRADOR'.");
         }
         existente.setEliminado(true);
         repo.save(existente);
@@ -164,7 +144,7 @@ public class ContratoServiceImpl implements ContratoService {
                 }
                 propiedadService.cambiarEstadoDesdeContrato(datos.getPropiedad(), EstadoDisponibilidad.DISPONIBLE);
             } else {
-                throw new Excepcion("Transición de estado no soportada.");
+                throw new Excepcion("No se puede transicionar desde el estado " + estadoActual);
             }
         }
 
