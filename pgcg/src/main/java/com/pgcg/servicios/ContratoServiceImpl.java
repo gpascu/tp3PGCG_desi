@@ -53,6 +53,12 @@ public class ContratoServiceImpl implements ContratoService {
         }
     }
 
+    // Al activar un contrato, la propiedad queda alquilada y sus publicaciones se finalizan
+    private void ocuparPropiedadPorContratoActivo(Propiedad propiedad) {
+        propiedadService.cambiarEstadoDesdeContrato(propiedad, EstadoDisponibilidad.ALQUILADA);
+        publicacionService.finalizarPublicacionesDePropiedad(propiedad.getId());
+    }
+
     private void guardarHistorial(Contrato contrato, EstadoContrato estado) {
         HistorialEstadoContrato h = new HistorialEstadoContrato();
         h.setContrato(contrato);
@@ -85,9 +91,7 @@ public class ContratoServiceImpl implements ContratoService {
                         "No se puede activar el contrato porque ya existe otro contrato activo para esta propiedad.");
             }
             if (contrato.getPropiedad().getEstadoDisponibilidad() == EstadoDisponibilidad.DISPONIBLE) {
-                propiedadService.cambiarEstadoDesdeContrato(contrato.getPropiedad(), EstadoDisponibilidad.ALQUILADA);
-                // Al activarse el contrato, se finalizan las publicaciones de esa propiedad
-                publicacionService.finalizarPublicacionesDePropiedad(contrato.getPropiedad().getId());
+                ocuparPropiedadPorContratoActivo(contrato.getPropiedad());
                 Contrato guardado = repo.save(contrato);
                 guardarHistorial(guardado, EstadoContrato.ACTIVO);
                 return guardado;
@@ -137,9 +141,7 @@ public class ContratoServiceImpl implements ContratoService {
                 if (datos.getPropiedad().getEstadoDisponibilidad() != EstadoDisponibilidad.DISPONIBLE) {
                     throw new Excepcion("No se puede activar el contrato porque la propiedad no está disponible.");
                 }
-                propiedadService.cambiarEstadoDesdeContrato(datos.getPropiedad(), EstadoDisponibilidad.ALQUILADA);
-                // Al activarse el contrato, se finalizan las publicaciones de esa propiedad
-                publicacionService.finalizarPublicacionesDePropiedad(datos.getPropiedad().getId());
+                ocuparPropiedadPorContratoActivo(datos.getPropiedad());
             } else if (estadoActual == EstadoContrato.ACTIVO && estadoNuevo == EstadoContrato.FINALIZADO) {
                 if (datos.getPropiedad().getEstadoDisponibilidad() != EstadoDisponibilidad.ALQUILADA) {
                     throw new Excepcion("No se puede finalizar el contrato porque la propiedad no está alquilada.");
