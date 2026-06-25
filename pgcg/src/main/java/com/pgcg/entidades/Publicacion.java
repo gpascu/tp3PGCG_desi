@@ -18,8 +18,10 @@ public class Publicacion {
     private Boolean eliminada;
     @Column(length = 1000)
     private String descripcion;
-    @ManyToOne
-    private Propiedad propiedad;
+ // EAGER obliga a Hibernate a traer la propiedad siempre adjunta a la publicación, evitando que dé null
+ @ManyToOne(fetch = FetchType.EAGER)
+ @JoinColumn(name = "propiedad_id") 
+ private Propiedad propiedad;
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public BigDecimal getPrecioMensual() { return precioMensual; }
