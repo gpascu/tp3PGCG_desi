@@ -18,4 +18,6 @@ public interface IPublicacionRepo extends JpaRepository<Publicacion, Long> {
     boolean existsByPropiedadIdAndEstadoAndEliminadaFalse(Long propiedadId, EstadoPublicacion estado);
 
     boolean existsByPropiedadIdAndEstadoAndEliminadaFalseAndIdNot(Long propiedadId, EstadoPublicacion estado, Long id);
+
+    boolean existsByPropiedadIdAndEstadoNotAndEliminadaFalse(Long propiedadId, EstadoPublicacion estado);
 }

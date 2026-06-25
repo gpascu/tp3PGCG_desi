@@ -18,6 +18,7 @@ public class PropiedadServiceImpl implements PropiedadService {
     @Autowired private IPersonaRepo personaRepo;
     @Autowired private ICiudadRepo ciudadRepo;
     @Autowired private IContratoRepo contratoRepo;
+    @Autowired private IPublicacionRepo publicacionRepo;
     @Autowired private IHistorialEstadoPropiedadRepo historialRepo;
 
     public List<Propiedad> buscar(String direccion, Long ciudadId, TipoPropiedad tipo, EstadoDisponibilidad estado) {
@@ -80,6 +81,7 @@ public class PropiedadServiceImpl implements PropiedadService {
     public void eliminar(Long id) throws Excepcion {
         Propiedad propiedad = buscarPorId(id);
         if (tieneContratoActivo(id)) throw new Excepcion("No se puede eliminar la propiedad porque tiene un contrato activo vigente");
+        if (tienePublicacionVigente(id)) throw new Excepcion("No se puede eliminar la propiedad porque tiene una publicación vigente (activa o pausada)");
         propiedad.setEliminada(true);
         propiedadRepo.save(propiedad);
     }
@@ -96,6 +98,12 @@ public class PropiedadServiceImpl implements PropiedadService {
             if (c.getPropiedad() != null && c.getPropiedad().getId().equals(propiedadId) && c.getEstado() == EstadoContrato.ACTIVO) return true;
         }
         return false;
+    }
+
+    // No se puede eliminar una propiedad que todavía tiene una publicación viva (activa o pausada).
+    // Solo si la publicación está finalizada se puede borrar.
+    private boolean tienePublicacionVigente(Long propiedadId) {
+        return publicacionRepo.existsByPropiedadIdAndEstadoNotAndEliminadaFalse(propiedadId, EstadoPublicacion.FINALIZADA);
     }
 
     private void validar(Propiedad propiedad, Long propietarioId, Long ciudadId, Long idActual) throws Excepcion {
