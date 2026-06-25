@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 import com.pgcg.entidades.HistorialEstadoPropiedad;
 
 @Repository
-public interface IHistorialEstadoPropiedadRepo extends JpaRepository<HistorialEstadoPropiedad, Long> {}
+public interface IHistorialEstadoPropiedadRepo extends JpaRepository<HistorialEstadoPropiedad, Long> {
+  List<HistorialEstadoPropiedad> findByPropiedadIdOrderByFechaHoraDesc(Long propiedadId);
+}
