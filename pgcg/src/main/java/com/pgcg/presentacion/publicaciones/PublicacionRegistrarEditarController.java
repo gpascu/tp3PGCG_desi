@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -23,17 +24,31 @@ public class PublicacionRegistrarEditarController {
     @Autowired
     private PropiedadServiceImpl propiedadService; 
 
-    // 1. Muestra el formulario vacío
+    // 1. Muestra el formulario vacío (alta)
     @GetMapping("/nuevo")
     public String mostrarFormulario(Model model) {
-        model.addAttribute("publicacionesform", new Publicacion()); 
+        Publicacion publicacion = new Publicacion();
+        // Propiedad inicializada para que el binding de *{propiedad.id} funcione
+        publicacion.setPropiedad(new Propiedad());
+        model.addAttribute("publicacionesform", publicacion);
         model.addAttribute("estados", EstadoPublicacion.values());
-        
-        // 🌟 AGREGADO: Buscamos todas las propiedades disponibles y se las mandamos al HTML
-        // Ajusta el método 'listarTodas()' según cómo se llame en tu PropiedadService (ej. findAll(), listar())
         model.addAttribute("propiedadesDisponibles", propiedadService.listarDisponibles());
-        
-        return "publicaciones/publicacionesform"; 
+
+        return "publicaciones/publicacionesform";
+    }
+
+    // 1b. Muestra el formulario con una publicación existente (edición)
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable("id") Long id, Model model) {
+        Publicacion publicacion = publicacionService.buscarPorId(id);
+        if (publicacion == null) {
+            return "redirect:/publicaciones";
+        }
+        model.addAttribute("publicacionesform", publicacion);
+        model.addAttribute("estados", EstadoPublicacion.values());
+        model.addAttribute("propiedadesDisponibles", propiedadService.listarDisponibles());
+
+        return "publicaciones/publicacionesform";
     }
 
     @PostMapping("/guardar")

@@ -52,10 +52,11 @@
             
             <div class="form-grupo">
                 <label for="selectPropiedad">Propiedad Asociada</label>
-                <select th:field="*{propiedad}" id="selectPropiedad" required>
+                <!-- ALTA: selector de propiedad -->
+                <select th:if="*{id == null}" th:field="*{propiedad.id}" id="selectPropiedad" required>
                     <option value="" disabled selected>-- Seleccione una propiedad --</option>
-                    <option th:each="prop : ${propiedadesDisponibles}" 
-                            th:value="${prop.id}" 
+                    <option th:each="prop : ${propiedadesDisponibles}"
+                            th:value="${prop.id}"
                             th:text="'[ID: ' + ${prop.id} + '] ' + ${prop.direccion}"
                             th:data-direccion="${prop.direccion}"
                             th:data-ciudad="${prop.ciudad != null ? prop.ciudad.nombre : 'No especificada'}"
@@ -66,6 +67,11 @@
                             th:data-comodidades="${prop.comodidades}">
                     </option>
                 </select>
+                <!-- EDICIÓN: la propiedad no se cambia -->
+                <span th:if="*{id != null}"
+                      th:text="${publicacionesform.propiedad != null ? '[ID: ' + publicacionesform.propiedad.id + '] ' + publicacionesform.propiedad.direccion : ''}">
+                </span>
+                <input type="hidden" th:if="*{id != null}" th:field="*{propiedad.id}">
             </div>
             
             <div class="form-grupo">
@@ -97,9 +103,9 @@
                 </select>
             </div>
             
-            <div class="botones-container">
-                <button type="submit" class="boton" style="background-color: #007bff; color: white; cursor: pointer;">Guardar</button>
-                <a class="boton" th:href="@{/publicaciones}" style="background-color: #6c757d; color: white; text-decoration: none; padding: 8px 12px; border-radius: 4px; text-align: center;">Volver</a>
+            <div class="acciones-form">
+                <button type="submit">Guardar</button>
+                <a class="boton" th:href="@{/publicaciones}">Volver</a>
             </div>
         </form>
     </div>
@@ -109,6 +115,10 @@
             const selectPropiedad = document.getElementById("selectPropiedad");
             const txtDescripcion = document.getElementById("descripcionPublicacion");
 
+            // En edición no existe el selector de propiedad: no hay nada que autocompletar
+            if (!selectPropiedad) {
+                return;
+            }
 
             selectPropiedad.addEventListener("change", function() {
                 // Captura la opción que el usuario seleccionó actualmente

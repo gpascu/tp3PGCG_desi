@@ -33,6 +33,9 @@ public class ContratoServiceImpl implements ContratoService {
     @Autowired
     private PersonaService personaService;
 
+    @Autowired
+    private PublicacionService publicacionService;
+
     @Override
     public List<Contrato> obtenerTodos() {
         return repo.findAll();
@@ -83,6 +86,8 @@ public class ContratoServiceImpl implements ContratoService {
             }
             if (contrato.getPropiedad().getEstadoDisponibilidad() == EstadoDisponibilidad.DISPONIBLE) {
                 propiedadService.cambiarEstadoDesdeContrato(contrato.getPropiedad(), EstadoDisponibilidad.ALQUILADA);
+                // Al activarse el contrato, se finalizan las publicaciones de esa propiedad
+                publicacionService.finalizarPublicacionesDePropiedad(contrato.getPropiedad().getId());
                 Contrato guardado = repo.save(contrato);
                 guardarHistorial(guardado, EstadoContrato.ACTIVO);
                 return guardado;
@@ -133,6 +138,8 @@ public class ContratoServiceImpl implements ContratoService {
                     throw new Excepcion("No se puede activar el contrato porque la propiedad no está disponible.");
                 }
                 propiedadService.cambiarEstadoDesdeContrato(datos.getPropiedad(), EstadoDisponibilidad.ALQUILADA);
+                // Al activarse el contrato, se finalizan las publicaciones de esa propiedad
+                publicacionService.finalizarPublicacionesDePropiedad(datos.getPropiedad().getId());
             } else if (estadoActual == EstadoContrato.ACTIVO && estadoNuevo == EstadoContrato.FINALIZADO) {
                 if (datos.getPropiedad().getEstadoDisponibilidad() != EstadoDisponibilidad.ALQUILADA) {
                     throw new Excepcion("No se puede finalizar el contrato porque la propiedad no está alquilada.");

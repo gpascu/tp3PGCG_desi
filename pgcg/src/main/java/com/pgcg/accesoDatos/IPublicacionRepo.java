@@ -10,16 +10,12 @@ import com.pgcg.entidades.Publicacion;
 
 @Repository
 public interface IPublicacionRepo extends JpaRepository<Publicacion, Long> {
-    static java.util.List<Publicacion> findByEliminadaFalseOrderByIdAsc() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	static boolean existsByPublicacionIdAndEstadoAndEliminadaFalse(Long publicaciondId, EstadoPublicacion activa) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    List<Publicacion> findByEliminadaFalseOrderByIdAsc();
 
+    List<Publicacion> findByPropiedadIdAndEliminadaFalse(Long propiedadId);
 
+    boolean existsByPropiedadIdAndEstadoAndEliminadaFalse(Long propiedadId, EstadoPublicacion estado);
 
+    boolean existsByPropiedadIdAndEstadoAndEliminadaFalseAndIdNot(Long propiedadId, EstadoPublicacion estado, Long id);
 }

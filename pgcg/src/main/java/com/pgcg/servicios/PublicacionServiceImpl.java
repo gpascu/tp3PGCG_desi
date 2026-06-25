@@ -23,57 +23,86 @@ public class PublicacionServiceImpl implements PublicacionService {
 
     @Override
     public Publicacion guardar(Publicacion publicacion) {
-        
-        // precio mensual 
+
+        // precio mensual
         if (publicacion.getPrecioMensual() == null || publicacion.getPrecioMensual().compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("Error: El precio mensual de la publicación debe ser mayor a $0.");
         }
 
-        // la propiedad está "disponible" 
+        // debe asociar una propiedad válida
         if (publicacion.getPropiedad() == null || publicacion.getPropiedad().getId() == null) {
             throw new RuntimeException("Error: Debe asociar una propiedad válida a la publicación.");
         }
-        
+
         Long propiedadId = publicacion.getPropiedad().getId();
         Propiedad propiedadReal = propiedadService.buscarPorId(propiedadId);
-        
-        if (publicacion.getId() == null) {
-            boolean yaExisteActiva = IPublicacionRepo.existsByPublicacionIdAndEstadoAndEliminadaFalse(propiedadId, EstadoPublicacion.ACTIVA);
-            if (yaExisteActiva) {
-                throw new RuntimeException("Error: La propiedad ya tiene una publicación ACTIVA en el sistema.");
-            }
-        }
-
         if (propiedadReal == null) {
             throw new RuntimeException("Error: La propiedad con ID " + propiedadId + " no existe.");
         }
 
-        if (propiedadReal.getEstadoDisponibilidad() != EstadoDisponibilidad.DISPONIBLE) {
-            throw new RuntimeException("Error: No se puede publicar. La propiedad no se encuentra en estado DISPONIBLE.");
-        }
-
-        publicacion.setPropiedad(propiedadReal);
-
-
-       
         if (publicacion.getId() == null) {
+            // ----- ALTA -----
+            // No puede haber dos publicaciones ACTIVAS de la misma propiedad
+            if (publicacionRepo.existsByPropiedadIdAndEstadoAndEliminadaFalse(propiedadId, EstadoPublicacion.ACTIVA)) {
+                throw new RuntimeException("Error: La propiedad ya tiene una publicación ACTIVA en el sistema.");
+            }
+            // Solo se puede publicar una propiedad disponible
+            if (propiedadReal.getEstadoDisponibilidad() != EstadoDisponibilidad.DISPONIBLE) {
+                throw new RuntimeException("Error: No se puede publicar. La propiedad no se encuentra en estado DISPONIBLE.");
+            }
+            publicacion.setPropiedad(propiedadReal);
             publicacion.setEstado(EstadoPublicacion.ACTIVA);
             publicacion.setEliminada(false);
-        }
+            return publicacionRepo.save(publicacion);
+        } else {
+            // ----- EDICIÓN -----
+            Publicacion existente = publicacionRepo.findById(publicacion.getId())
+                    .orElseThrow(() -> new RuntimeException("Error: No existe la publicación a editar."));
 
-  
-        return publicacionRepo.save(publicacion);
+            // No se puede reactivar una publicación finalizada
+            if (existente.getEstado() == EstadoPublicacion.FINALIZADA
+                    && publicacion.getEstado() != EstadoPublicacion.FINALIZADA) {
+                throw new RuntimeException("Error: No se puede reactivar una publicación finalizada.");
+            }
+            // No dejar dos publicaciones ACTIVAS de la misma propiedad
+            if (publicacion.getEstado() == EstadoPublicacion.ACTIVA
+                    && publicacionRepo.existsByPropiedadIdAndEstadoAndEliminadaFalseAndIdNot(
+                            propiedadId, EstadoPublicacion.ACTIVA, existente.getId())) {
+                throw new RuntimeException("Error: La propiedad ya tiene otra publicación ACTIVA.");
+            }
+
+            // La propiedad asociada no se cambia al editar; se conserva la original
+            existente.setPrecioMensual(publicacion.getPrecioMensual());
+            existente.setCondiciones(publicacion.getCondiciones());
+            existente.setFechaPublicacion(publicacion.getFechaPublicacion());
+            existente.setDescripcion(publicacion.getDescripcion());
+            existente.setEstado(publicacion.getEstado());
+            return publicacionRepo.save(existente);
+        }
     }
 
 	@Override
 	public List<Publicacion> listarTodas() {
-		return IPublicacionRepo.findByEliminadaFalseOrderByIdAsc();
+		return publicacionRepo.findByEliminadaFalseOrderByIdAsc();
 	}
 
 	@Override
 	public Publicacion buscarPorId(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return publicacionRepo.findById(id).orElse(null);
+	}
+
+	@Override
+	public void finalizarPublicacionesDePropiedad(Long propiedadId) {
+		if (propiedadId == null) {
+			return;
+		}
+		List<Publicacion> publicaciones = publicacionRepo.findByPropiedadIdAndEliminadaFalse(propiedadId);
+		for (Publicacion p : publicaciones) {
+			if (p.getEstado() != EstadoPublicacion.FINALIZADA) {
+				p.setEstado(EstadoPublicacion.FINALIZADA);
+				publicacionRepo.save(p);
+			}
+		}
 	}
 	
 	@Override
@@ -95,7 +124,7 @@ public class PublicacionServiceImpl implements PublicacionService {
 
 	@Override
 	public List<Publicacion> buscarConFiltros(Long id, EstadoPublicacion estado) {
-	    List<Publicacion> todas = publicacionRepo.findAll(); 
+	    List<Publicacion> todas = publicacionRepo.findByEliminadaFalseOrderByIdAsc();
 	    List<Publicacion> resultado = new ArrayList<Publicacion>();
 	    if (todas == null) {
 	        return resultado;
