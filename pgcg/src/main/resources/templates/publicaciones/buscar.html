@@ -42,12 +42,15 @@
         <td th:text="${p.fechaPublicacion != null} ? ${#temporals.format(p.fechaPublicacion, 'dd/MM/yyyy')} : '-'"></td>
         <td th:text="${'$ ' + p.precioMensual}"></td>
         <td th:text="${p.estado}"></td>
-        <td>
-            <form th:action="@{/publicaciones/eliminar/{id}(id=${p.id})}" method="post" style="display:inline;"
-                  onclick="return confirm('¿Está seguro de dar de baja esta publicación?');">
-                <button type="submit">Eliminar</button>
-            </form>
-        </td>
+		<td>
+		    <a class="boton" th:href="@{/publicaciones/editar/{id}(id=${p.id})}">Editar</a>
+
+		    <form th:action="@{/publicaciones/eliminar/{id}(id=${p.id})}" method="post" style="display:inline;"
+		          onclick="return confirm('¿Está seguro de dar de baja esta publicación?');">
+		        <button type="submit">Eliminar</button>
+		    </form>
+		</td>
+		    
     </tr>
 </table>
 </div>

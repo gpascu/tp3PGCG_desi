@@ -36,4 +36,10 @@ public class Publicacion {
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public Propiedad getPropiedad() { return propiedad; }
     public void setPropiedad(Propiedad propiedad) { this.propiedad = propiedad; }
+	public Publicacion orElseThrow(Object object) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 }

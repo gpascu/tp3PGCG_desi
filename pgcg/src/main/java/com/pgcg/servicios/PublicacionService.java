@@ -13,5 +13,6 @@ public interface PublicacionService {
     Publicacion buscarPorId(Long id);
     void eliminar(Long id);
 	List<Publicacion> buscarConFiltros(Long id, EstadoPublicacion estado);
+	Publicacion modificar(Long id, Publicacion publicacionModificada);
 	
 }

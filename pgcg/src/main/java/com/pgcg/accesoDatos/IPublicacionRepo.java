@@ -19,7 +19,8 @@ public interface IPublicacionRepo extends JpaRepository<Publicacion, Long> {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-
-
+    static boolean existsByPropiedadIdAndEstadoAndEliminadaFalse(Long propiedadId, EstadoPublicacion estado) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
