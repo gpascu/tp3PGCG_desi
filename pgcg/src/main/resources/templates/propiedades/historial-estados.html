@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PGCG</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+<div th:replace="fragments/menu :: menu"></div>
+
+<div class="contenedor">
+    <h1>Historial de estados de la propiedad</h1>
+
+    <p><strong>ID:</strong> <span th:text="${propiedad.id}"></span></p>
+    <p><strong>Dirección:</strong> <span th:text="${propiedad.direccion}"></span></p>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Fecha y hora</th>
+            <th>Estado</th>
+        </tr>
+        <tr th:each="h : ${historial}">
+            <td th:text="${h.id}"></td>
+            <td th:text="${#temporals.format(h.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="${h.estado}"></td>
+        </tr>
+    </table>
+
+    <a class="boton" th:href="@{/propiedades}">Volver</a>
+</div>
+</body>
+</html>

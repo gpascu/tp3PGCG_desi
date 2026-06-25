@@ -46,6 +46,14 @@ public class PropiedadServiceImpl implements PropiedadService {
         return propiedadRepo.findById(id).orElseThrow(() -> new EntidadNoEncontradaException("Propiedad", id));
     }
 
+    /*Agregado para historico propiedad INICIO*/
+    @Override
+    public List<HistorialEstadoPropiedad> listarHistorialEstados(Long propiedadId) {
+        buscarPorId(propiedadId);
+        return historialRepo.findByPropiedadIdOrderByFechaHoraDesc(propiedadId);
+    }
+    /*Agregado para historico propiedad FIN*/
+
     public void registrar(Propiedad propiedad, Long propietarioId, Long ciudadId) throws Excepcion {
         validar(propiedad, propietarioId, ciudadId, null);
         propiedad.setPropietario(personaRepo.findById(propietarioId).orElseThrow(() -> new EntidadNoEncontradaException("Persona", propietarioId)));
