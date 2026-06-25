@@ -4,6 +4,9 @@ import com.pgcg.entidades.EstadoDisponibilidad;
 import com.pgcg.entidades.EstadoPublicacion;
 import com.pgcg.entidades.Propiedad;
 import com.pgcg.entidades.Publicacion;
+
+import jakarta.transaction.Transactional;
+
 import com.pgcg.accesoDatos.IPublicacionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ public class PublicacionServiceImpl implements PublicacionService {
     private PropiedadService propiedadService; 
 
     @Override
+    @Transactional
     public Publicacion guardar(Publicacion publicacion) {
         
         // precio mensual 
@@ -38,7 +42,7 @@ public class PublicacionServiceImpl implements PublicacionService {
         Propiedad propiedadReal = propiedadService.buscarPorId(propiedadId);
         
         if (publicacion.getId() == null) {
-            boolean yaExisteActiva = IPublicacionRepo.existsByPropiedadIdAndEstadoAndEliminadaFalse(propiedadId, EstadoPublicacion.ACTIVA);
+            boolean yaExisteActiva = publicacionRepo.existsByPropiedadIdAndEstadoAndEliminadaFalse(propiedadId, EstadoPublicacion.ACTIVA);
             if (yaExisteActiva) {
                 throw new RuntimeException("Error: La propiedad ya tiene una publicación ACTIVA en el sistema.");
             }
@@ -67,7 +71,7 @@ public class PublicacionServiceImpl implements PublicacionService {
 
 	@Override
 	public List<Publicacion> listarTodas() {
-		return IPublicacionRepo.findByEliminadaFalseOrderByIdAsc();
+		return publicacionRepo.findByEliminadaFalseOrderByIdAsc();
 	}
 
 	@Override
