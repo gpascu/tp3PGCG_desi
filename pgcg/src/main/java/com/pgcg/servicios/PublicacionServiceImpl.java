@@ -2,13 +2,16 @@ package com.pgcg.servicios;
 
 import com.pgcg.entidades.EstadoDisponibilidad;
 import com.pgcg.entidades.EstadoPublicacion;
+import com.pgcg.entidades.HistorialEstadoPublicacion;
 import com.pgcg.entidades.Propiedad;
 import com.pgcg.entidades.Publicacion;
 import com.pgcg.accesoDatos.IPublicacionRepo;
+import com.pgcg.accesoDatos.IHistorialEstadoPublicacionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +22,10 @@ public class PublicacionServiceImpl implements PublicacionService {
     private IPublicacionRepo publicacionRepo;
 
     @Autowired
-    private PropiedadService propiedadService; 
+    private PropiedadService propiedadService;
+
+    @Autowired
+    private IHistorialEstadoPublicacionRepo historialRepo;
 
     @Override
     public Publicacion guardar(Publicacion publicacion) {
@@ -40,6 +46,17 @@ public class PublicacionServiceImpl implements PublicacionService {
             throw new RuntimeException("Error: La propiedad con ID " + propiedadId + " no existe.");
         }
 
+        // Todos los datos de la publicación son requeridos
+        if (publicacion.getCondiciones() == null || publicacion.getCondiciones().trim().isEmpty()) {
+            throw new RuntimeException("Error: Las condiciones de alquiler son obligatorias.");
+        }
+        if (publicacion.getDescripcion() == null || publicacion.getDescripcion().trim().isEmpty()) {
+            throw new RuntimeException("Error: La descripción es obligatoria.");
+        }
+        if (publicacion.getFechaPublicacion() == null) {
+            throw new RuntimeException("Error: La fecha de publicación es obligatoria.");
+        }
+
         if (publicacion.getId() == null) {
             // ----- ALTA -----
             // No puede haber dos publicaciones ACTIVAS de la misma propiedad
@@ -53,7 +70,10 @@ public class PublicacionServiceImpl implements PublicacionService {
             publicacion.setPropiedad(propiedadReal);
             publicacion.setEstado(EstadoPublicacion.ACTIVA);
             publicacion.setEliminada(false);
-            return publicacionRepo.save(publicacion);
+            Publicacion guardada = publicacionRepo.save(publicacion);
+            // Se registra el estado inicial en el historial
+            guardarHistorial(guardada, guardada.getEstado());
+            return guardada;
         } else {
             // ----- EDICIÓN -----
             Publicacion existente = publicacionRepo.findById(publicacion.getId())
@@ -72,12 +92,18 @@ public class PublicacionServiceImpl implements PublicacionService {
             }
 
             // La propiedad asociada no se cambia al editar; se conserva la original
+            EstadoPublicacion estadoAnterior = existente.getEstado();
             existente.setPrecioMensual(publicacion.getPrecioMensual());
             existente.setCondiciones(publicacion.getCondiciones());
             existente.setFechaPublicacion(publicacion.getFechaPublicacion());
             existente.setDescripcion(publicacion.getDescripcion());
             existente.setEstado(publicacion.getEstado());
-            return publicacionRepo.save(existente);
+            Publicacion guardada = publicacionRepo.save(existente);
+            // Si cambió el estado, se registra en el historial
+            if (estadoAnterior != guardada.getEstado()) {
+                guardarHistorial(guardada, guardada.getEstado());
+            }
+            return guardada;
         }
     }
 
@@ -100,9 +126,19 @@ public class PublicacionServiceImpl implements PublicacionService {
 		for (Publicacion p : publicaciones) {
 			if (p.getEstado() != EstadoPublicacion.FINALIZADA) {
 				p.setEstado(EstadoPublicacion.FINALIZADA);
-				publicacionRepo.save(p);
+				Publicacion guardada = publicacionRepo.save(p);
+				guardarHistorial(guardada, EstadoPublicacion.FINALIZADA);
 			}
 		}
+	}
+
+	// Guarda un registro en el historial con el estado y la fecha/hora del cambio
+	private void guardarHistorial(Publicacion publicacion, EstadoPublicacion estado) {
+		HistorialEstadoPublicacion h = new HistorialEstadoPublicacion();
+		h.setPublicacion(publicacion);
+		h.setEstado(estado);
+		h.setFechaHora(LocalDateTime.now());
+		historialRepo.save(h);
 	}
 	
 	@Override
@@ -123,7 +159,8 @@ public class PublicacionServiceImpl implements PublicacionService {
 	}
 
 	@Override
-	public List<Publicacion> buscarConFiltros(Long id, EstadoPublicacion estado) {
+	public List<Publicacion> buscarConFiltros(Long propiedadId, Long ciudadId, EstadoPublicacion estado,
+	        BigDecimal precioMin, BigDecimal precioMax) {
 	    List<Publicacion> todas = publicacionRepo.findByEliminadaFalseOrderByIdAsc();
 	    List<Publicacion> resultado = new ArrayList<Publicacion>();
 	    if (todas == null) {
@@ -132,24 +169,34 @@ public class PublicacionServiceImpl implements PublicacionService {
 
 	    for (Publicacion p : todas) {
 	        boolean cumple = true;
-	        
-	        // Filtro por ID
-	        if (id != null && (p.getId() == null || !p.getId().equals(id))) {
+	        Propiedad prop = p.getPropiedad();
+
+	        // Filtro por propiedad
+	        if (propiedadId != null && (prop == null || !propiedadId.equals(prop.getId()))) {
 	            cumple = false;
 	        }
-	        
-	        // Filtro por Estado
+	        // Filtro por ciudad de la propiedad
+	        if (ciudadId != null && (prop == null || prop.getCiudad() == null || !ciudadId.equals(prop.getCiudad().getId()))) {
+	            cumple = false;
+	        }
+	        // Filtro por estado
 	        if (estado != null && p.getEstado() != estado) {
 	            cumple = false;
 	        }
+	        // Filtro por rango de precio mensual
+	        if (precioMin != null && (p.getPrecioMensual() == null || p.getPrecioMensual().compareTo(precioMin) < 0)) {
+	            cumple = false;
+	        }
+	        if (precioMax != null && (p.getPrecioMensual() == null || p.getPrecioMensual().compareTo(precioMax) > 0)) {
+	            cumple = false;
+	        }
 
-	        // Si paso todos los filtros activos se agrega al resultado
 	        if (cumple) {
 	            resultado.add(p);
 	        }
 	    }
-	    
+
 	    return resultado;
 	}
-   
+
 }

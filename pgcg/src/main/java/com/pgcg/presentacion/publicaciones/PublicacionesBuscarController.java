@@ -1,8 +1,9 @@
 package com.pgcg.presentacion.publicaciones;
 
-import com.pgcg.entidades.Publicacion;
 import com.pgcg.entidades.EstadoPublicacion;
 import com.pgcg.servicios.PublicacionServiceImpl;
+import com.pgcg.servicios.PropiedadService;
+import com.pgcg.servicios.CiudadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import java.util.List;
 
 @Controller
 @RequestMapping("/publicaciones")
@@ -20,24 +20,22 @@ public class PublicacionesBuscarController {
     @Autowired
     private PublicacionServiceImpl publicacionService;
 
+    @Autowired
+    private PropiedadService propiedadService;
+
+    @Autowired
+    private CiudadService ciudadService;
+
     @GetMapping
     public String verListadoConFiltros(@ModelAttribute("formBusqueda") PublicacionBusquedaForm formBusqueda, Model model) {
         try {
-            List<Publicacion> lista;
-
-            // Filtrar por id o estado
-            if (formBusqueda.getId() != null || formBusqueda.getEstado() != null) {
-                lista = publicacionService.buscarConFiltros(formBusqueda.getId(), formBusqueda.getEstado());
-            } else {
-                lista = publicacionService.listarTodas();
-            }
-
-            model.addAttribute("lista", lista); // 'lista' coincide con el th:each="p : ${lista}"
-            model.addAttribute("estados", EstadoPublicacion.values());
-            
+            model.addAttribute("lista", publicacionService.buscarConFiltros(
+                    formBusqueda.getPropiedadId(), formBusqueda.getCiudadId(), formBusqueda.getEstado(),
+                    formBusqueda.getPrecioMin(), formBusqueda.getPrecioMax()));
         } catch (RuntimeException e) {
             model.addAttribute("error", "Error al procesar la búsqueda: " + e.getMessage());
         }
+        cargarCombos(model);
         return "publicaciones/buscar";
     }
 
@@ -49,9 +47,15 @@ public class PublicacionesBuscarController {
         } catch (RuntimeException e) {
             model.addAttribute("error", "No se pudo dar de baja: " + e.getMessage());
             model.addAttribute("lista", publicacionService.listarTodas());
-            model.addAttribute("estados", EstadoPublicacion.values());
             model.addAttribute("formBusqueda", new PublicacionBusquedaForm());
+            cargarCombos(model);
             return "publicaciones/buscar";
         }
+    }
+
+    private void cargarCombos(Model model) {
+        model.addAttribute("estados", EstadoPublicacion.values());
+        model.addAttribute("propiedades", propiedadService.buscar(null, null, null, null));
+        model.addAttribute("ciudades", ciudadService.listarActivas());
     }
 }
