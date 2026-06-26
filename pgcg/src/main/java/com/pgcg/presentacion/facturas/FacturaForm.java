@@ -2,17 +2,21 @@ package com.pgcg.presentacion.facturas;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 import com.pgcg.entidades.*;
 
 public class FacturaForm {
     private Long id;
     private Long contratoId;
     private String conceptoFacturado;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaEmision;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaVencimiento;
     private BigDecimal importe;
     private EstadoFactura estado;
     // datos de pago (opcionales)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaPago;
     private MedioPago medio;
     private BigDecimal importePagado;
