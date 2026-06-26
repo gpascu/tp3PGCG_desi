@@ -106,6 +106,22 @@ public class FacturaServiceImpl implements FacturaService {
         facturaRepo.save(factura);
     }
 
+    // Registra el pago de una factura: la pasa a PAGADA y completa los datos de pago
+    public void pagar(Long id, LocalDate fechaPago, MedioPago medio, BigDecimal importePagado, BigDecimal interes) throws Excepcion {
+        Factura factura = buscarPorId(id);
+        if (!transicionValida(factura.getEstado(), EstadoFactura.PAGADA)) {
+            throw new Excepcion("No se puede pagar una factura en estado " + factura.getEstado());
+        }
+        factura.setEstado(EstadoFactura.PAGADA);
+        factura.setFechaPago(fechaPago);
+        factura.setMedio(medio);
+        factura.setImportePagado(importePagado);
+        factura.setInteres(interes);
+        validarDatosPago(factura);
+        Factura guardada = facturaRepo.save(factura);
+        guardarHistorial(guardada, EstadoFactura.PAGADA);
+    }
+
     private void validarDatosGenerales(Factura f) throws Excepcion {
         if (f.getConceptoFacturado() == null || f.getConceptoFacturado().trim().isEmpty())
             throw new Excepcion("El concepto facturado es obligatorio", "conceptoFacturado");

@@ -1,5 +1,6 @@
 package com.pgcg.servicios;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import com.pgcg.entidades.*;
@@ -14,4 +15,5 @@ public interface FacturaService {
     void registrar(Factura factura, Long contratoId) throws Excepcion;
     void editar(Factura factura) throws Excepcion;
     void eliminar(Long id) throws Excepcion;
+    void pagar(Long id, LocalDate fechaPago, MedioPago medio, BigDecimal importePagado, BigDecimal interes) throws Excepcion;
 }

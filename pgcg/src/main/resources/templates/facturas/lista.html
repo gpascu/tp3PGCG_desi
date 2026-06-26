@@ -119,6 +119,17 @@
 
                         <div class="acciones">
 
+                            <div class="accion-item"
+                                 th:if="${f.estado.name() == 'PENDIENTE' or f.estado.name() == 'VENCIDA'}">
+
+                                <a class="boton"
+                                   th:href="@{/facturas/pagar/{id}(id=${f.id})}"
+                                   style="background:#10b981;color:#fff;">
+                                    Pagar
+                                </a>
+
+                            </div>
+
                             <div class="accion-item">
 
                                 <a class="boton boton-editar"

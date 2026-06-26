@@ -3,8 +3,12 @@ package com.pgcg.presentacion.facturas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import com.pgcg.entidades.*;
 import com.pgcg.excepciones.Excepcion;
@@ -69,6 +73,32 @@ public class FacturaRegistrarEditarController {
             model.addAttribute("contratoActual", facturaService.buscarPorId(form.getId()).getContrato());
             cargarCombos(model);
             return "facturas/form";
+        }
+    }
+
+    @GetMapping("/pagar/{id}")
+    public String pagarForm(@PathVariable Long id, Model model) {
+        model.addAttribute("factura", facturaService.buscarPorId(id));
+        model.addAttribute("medios", MedioPago.values());
+        return "facturas/pagar";
+    }
+
+    @PostMapping("/pagar")
+    public String pagar(@RequestParam Long id,
+                        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaPago,
+                        @RequestParam(required = false) MedioPago medio,
+                        @RequestParam(required = false) BigDecimal importePagado,
+                        @RequestParam(required = false) BigDecimal interes,
+                        RedirectAttributes ra, Model model) {
+        try {
+            facturaService.pagar(id, fechaPago, medio, importePagado, interes);
+            ra.addFlashAttribute("ok", "Pago registrado correctamente");
+            return "redirect:/facturas";
+        } catch (Excepcion e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("factura", facturaService.buscarPorId(id));
+            model.addAttribute("medios", MedioPago.values());
+            return "facturas/pagar";
         }
     }
 
