@@ -94,6 +94,7 @@ body {
     padding: 30px;
     border-radius: 16px;
     box-shadow: var(--shadow);
+    position: relative;
 }
 
 h1 {
@@ -141,6 +142,18 @@ textarea {
 }
 
 /* =========================
+   DATEPICKER
+   ========================= */
+input[type="date"] {
+    cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(30%) sepia(80%) saturate(1500%) hue-rotate(210deg) brightness(90%) contrast(90%);
+}
+
+/* =========================
    BOTONES
 ========================= */
 button,
@@ -175,22 +188,45 @@ button:active,
    MENSAJES
 ========================= */
 .mensaje {
-    padding: 14px;
-    border-radius: 10px;
+    padding: 12px 16px;
+    border-radius: 8px;
     margin-bottom: 15px;
     font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.contenedor > .mensaje {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    z-index: 100;
+    max-width: 450px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 0;
+    animation: toast-entrada 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toast-entrada {
+    from {
+        transform: translateX(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 .ok {
     background: #dcfce7;
     color: #166534;
-    border-left: 5px solid var(--success);
+    border: 1px solid #bbf7d0;
 }
 
 .error {
     background: #fee2e2;
     color: #991b1b;
-    border-left: 5px solid var(--danger);
+    border: 1px solid #fecaca;
 }
 
 /* =========================
@@ -499,4 +535,67 @@ form:first-of-type select {
     .acciones {
         flex-direction: column;
     }
+}
+
+/* =========================
+   ESTILOS DE CONTRATOS
+   ========================= */
+form.form-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.full-width {
+    grid-column: span 2 !important;
+}
+
+.acciones-form {
+    grid-column: span 2 !important;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.form-group .mensaje.error {
+    margin-top: 5px;
+    margin-bottom: 0;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+.filtro-fecha {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 180px;
+    align-self: flex-end;
+}
+
+.filtro-fecha label {
+    font-size: 0.85rem;
+    color: #4b5563;
+    font-weight: 600;
+}
+
+.filtro-fecha input[type="date"] {
+    padding: 10px 12px;
+}
+
+form:first-of-type button,
+form:first-of-type .boton {
+    align-self: flex-end;
+    margin-bottom: 2px;
+}
+
+form:first-of-type select {
+    align-self: flex-end;
+    margin-bottom: 2px;
 }
