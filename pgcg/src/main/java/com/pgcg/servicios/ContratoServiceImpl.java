@@ -226,4 +226,9 @@ public class ContratoServiceImpl implements ContratoService {
     public List<Persona> getAllInquilinos() {
         return personaService.listarActivas();
     }
+
+    @Override
+    public List<HistorialEstadoContrato> listarHistorialEstados(Long contratoId) {
+        return historialRepo.findByContratoIdOrderByFechaHoraDesc(contratoId);
+    }
 }

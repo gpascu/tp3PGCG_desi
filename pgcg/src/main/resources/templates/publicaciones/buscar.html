@@ -52,7 +52,7 @@
         <td th:text="${p.id}"></td>
         <td th:text="${p.propiedad != null ? p.propiedad.direccion : '-'}"></td>
         <td th:text="${p.propiedad != null and p.propiedad.ciudad != null ? p.propiedad.ciudad.nombre : '-'}"></td>
-        <td th:text="${p.fechaPublicacion != null} ? ${#temporals.format(p.fechaPublicacion, 'dd/MM/yyyy')} : '-'"></td>
+        <td th:text="${p.fechaPublicacion != null ? #temporals.format(p.fechaPublicacion, 'dd/MM/yyyy') : '-'}"></td>
         <td th:text="${'$ ' + p.precioMensual}"></td>
         <td th:text="${p.estado}"></td>
         <td>

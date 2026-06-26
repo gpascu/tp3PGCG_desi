@@ -5,6 +5,7 @@ import java.util.List;
 import com.pgcg.entidades.Contrato;
 import com.pgcg.entidades.Persona;
 import com.pgcg.entidades.Propiedad;
+import com.pgcg.entidades.HistorialEstadoContrato;
 import com.pgcg.excepciones.Excepcion;
 import com.pgcg.presentacion.contratos.ContratoBuscarForm;
 
@@ -26,4 +27,6 @@ public interface ContratoService {
     List<Propiedad> getAllPropiedadesDisponibles();
 
     List<Persona> getAllInquilinos();
+
+    List<HistorialEstadoContrato> listarHistorialEstados(Long contratoId);
 }

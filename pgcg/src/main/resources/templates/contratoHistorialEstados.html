@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PGCG Inmobiliaria - Historial de Contratos</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+<div th:replace="fragments/menu :: menu"></div>
+
+<div class="contenedor">
+    <h1>Historial de estados del contrato</h1>
+
+    <div class="historial-grid">
+        <div>
+            <p><strong>ID del Contrato:</strong> <span th:text="${contrato.id}"></span></p>
+            <p><strong>Propiedad:</strong> <span th:text="${contrato.propiedad != null ? contrato.propiedad.direccion : 'N/A'}"></span></p>
+        </div>
+        <div>
+            <p><strong>Propietario:</strong> <span th:text="${contrato.propiedad != null && contrato.propiedad.propietario != null ? contrato.propiedad.propietario.nombreCompleto : 'N/A'}"></span></p>
+            <p><strong>Inquilino:</strong> <span th:text="${contrato.inquilino != null ? contrato.inquilino.nombreCompleto : 'N/A'}"></span></p>
+        </div>
+    </div>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Fecha y hora</th>
+            <th>Estado</th>
+        </tr>
+        <tr th:each="h : ${historial}">
+            <td th:text="${h.id}"></td>
+            <td th:text="${#temporals.format(h.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="${h.estado}"></td>
+        </tr>
+    </table>
+
+    <a class="boton" th:href="@{/contratos}">Volver</a>
+</div>
+</body>
+</html>
