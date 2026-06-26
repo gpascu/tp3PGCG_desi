@@ -38,7 +38,7 @@ INSERT INTO incidente (id, titulo, descripcion, categoria, fecha_alta, prioridad
 (1, 'Perdida de agua', 'Fuga en cocina', 'PLOMERIA', NOW(), 'ALTA', 'ABIERTO', false, NULL, NULL, NULL, NULL, 1),
 (2, 'Termica', 'Salta la termica', 'ELECTRICIDAD', NOW(), 'MEDIA', 'EN_PROCESO', false, NULL, NULL, NULL, 'Tecnico Juan', 1);
 INSERT INTO historial_estado_incidente (id, estado, fecha_hora, incidente_id) VALUES (1, 'ABIERTO', NOW(), 1), (2, 'EN_PROCESO', NOW(), 2);
-INSERT INTO factura (id, fecha_emision, fecha_vencimiento, importe, estado, eliminada, fecha_pago, medio, importe_pagado, periodo_facturado, contrato_id) VALUES
-(1, '2026-05-10', '2026-05-20', 10000.00, 'PENDIENTE', false, NULL, NULL, NULL, '2026-05', 1),
-(2, '2026-04-01', '2026-04-10', 20000.00, 'PAGADA', false, '2026-04-09', 'TRANSFERENCIA', 20000.00, '2026-04', 1);
+INSERT INTO factura (id, fecha_emision, fecha_vencimiento, importe, estado, eliminada, fecha_pago, medio, importe_pagado, interes, concepto_facturado, contrato_id) VALUES
+(1, '2026-05-10', '2026-05-20', 10000.00, 'PENDIENTE', false, NULL, NULL, NULL, NULL, 'Reparacion de puerta', 1),
+(2, '2026-04-01', '2026-04-10', 20000.00, 'PAGADA', false, '2026-04-09', 'TRANSFERENCIA', 20000.00, 0.00, 'Expensas extraordinarias', 1);
 INSERT INTO historial_estado_factura (id, estado, fecha_hora, factura_id) VALUES (1, 'PENDIENTE', NOW(), 1), (2, 'PAGADA', NOW(), 2);

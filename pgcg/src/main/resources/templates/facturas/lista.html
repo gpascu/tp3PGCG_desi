@@ -36,10 +36,21 @@
                 </option>
             </select>
 
-            <label>Período</label>
+            <select th:field="*{propiedadId}">
+                <option value="">Propiedad</option>
+                <option th:each="p : ${propiedades}"
+                        th:value="${p.id}"
+                        th:text="${p.direccion}">
+                </option>
+            </select>
 
-            <input type="month"
-                   th:field="*{periodoFacturado}">
+            <select th:field="*{inquilinoId}">
+                <option value="">Inquilino</option>
+                <option th:each="i : ${inquilinos}"
+                        th:value="${i.id}"
+                        th:text="${i.nombreCompleto}">
+                </option>
+            </select>
 
             <select th:field="*{estado}">
                 <option value="">Estado</option>
@@ -48,6 +59,12 @@
                         th:text="${e}">
                 </option>
             </select>
+
+            <label>Vence desde</label>
+            <input type="date" th:field="*{vencimientoDesde}">
+
+            <label>Vence hasta</label>
+            <input type="date" th:field="*{vencimientoHasta}">
 
             <button type="submit">
                 Buscar
@@ -69,7 +86,6 @@
                     <th>Contrato</th>
                     <th>Propiedad</th>
                     <th>Inquilino</th>
-                    <th>Período</th>
                     <th>Emisión</th>
                     <th>Vencimiento</th>
                     <th>Importe</th>
@@ -90,8 +106,6 @@
                     <td th:text="${f.contrato != null and f.contrato.propiedad != null ? f.contrato.propiedad.direccion : ''}"></td>
 
                     <td th:text="${f.contrato != null and f.contrato.inquilino != null ? f.contrato.inquilino.nombreCompleto : ''}"></td>
-
-                    <td th:text="${f.periodoFacturado}"></td>
 
                     <td th:text="${f.fechaEmision}"></td>
 

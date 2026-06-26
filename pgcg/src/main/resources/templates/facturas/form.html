@@ -46,10 +46,10 @@
                    th:if="${form.id != null}"
                    th:field="*{contratoId}">
 
-            <label>Período facturado</label>
+            <label>Concepto facturado</label>
 
-            <input type="month"
-                   th:field="*{periodoFacturado}">
+            <input type="text"
+                   th:field="*{conceptoFacturado}">
 
             <label>Fecha de emisión</label>
 
@@ -98,6 +98,12 @@
             <input type="number"
                    step="0.01"
                    th:field="*{importePagado}">
+
+            <label>Interés pagado</label>
+
+            <input type="number"
+                   step="0.01"
+                   th:field="*{interes}">
 
             <div class="acciones-form">
 
