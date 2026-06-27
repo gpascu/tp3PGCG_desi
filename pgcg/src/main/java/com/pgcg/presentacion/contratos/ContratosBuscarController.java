@@ -26,14 +26,14 @@ public class ContratosBuscarController {
         modelo.addAttribute("formBusqueda", new ContratoBuscarForm());
         modelo.addAttribute("lista", contratoService.filter(new ContratoBuscarForm()));
         cargarCombos(modelo);
-        return "contratosBuscar";
+        return "contratos/contratosBuscar";
     }
 
     @PostMapping
     public String buscar(@ModelAttribute("formBusqueda") ContratoBuscarForm formBean, Model modelo) {
         modelo.addAttribute("lista", contratoService.filter(formBean));
         cargarCombos(modelo);
-        return "contratosBuscar";
+        return "contratos/contratosBuscar";
     }
 
     @PostMapping("/eliminar/{id}")

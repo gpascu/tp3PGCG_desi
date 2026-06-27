@@ -22,6 +22,6 @@ public class ContratoHistorialController {
         Contrato contrato = contratoService.buscarPorId(id);
         model.addAttribute("contrato", contrato);
         model.addAttribute("historial", contratoService.listarHistorialEstados(id));
-        return "contratoHistorialEstados";
+        return "contratos/contratoHistorialEstados";
     }
 }

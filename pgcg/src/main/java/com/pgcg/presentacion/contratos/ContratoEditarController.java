@@ -52,7 +52,7 @@ public class ContratoEditarController {
         ContratoForm form = new ContratoForm();
         form.setEstado(EstadoContrato.BORRADOR);
         modelo.addAttribute("form", form);
-        return "contratoEditar";
+        return "contratos/contratoEditar";
     }
 
     @GetMapping("/editar/{id}")
@@ -91,7 +91,7 @@ public class ContratoEditarController {
             form.setInquilinoId(c.getInquilino().getId());
         }
         modelo.addAttribute("form", form);
-        return "contratoEditar";
+        return "contratos/contratoEditar";
     }
 
     @PostMapping("/guardar")
@@ -117,7 +117,7 @@ public class ContratoEditarController {
                     }
                 }
             }
-            return "contratoEditar";
+            return "contratos/contratoEditar";
         }
         try {
             Contrato c = aEntidad(formBean);
@@ -151,7 +151,7 @@ public class ContratoEditarController {
                     }
                 }
             }
-            return "contratoEditar";
+            return "contratos/contratoEditar";
         }
     }
 

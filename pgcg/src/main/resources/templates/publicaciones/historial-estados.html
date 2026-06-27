@@ -16,12 +16,10 @@
  
     <table>
 <tr>
-<th>ID</th>
 <th>Fecha y hora</th>
 <th>Estado</th>
 </tr>
 <tr th:each="h : ${historial}">
-<td th:text="${h.id}"></td>
 <td th:text="${#temporals.format(h.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
 <td th:text="${h.estado}"></td>
 </tr>
