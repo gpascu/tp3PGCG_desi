@@ -57,10 +57,13 @@
         <td th:text="${p.estado}"></td>
         <td>
             <div class="acciones">
-                <div class="accion-item">
-                    <a class="boton boton-editar" th:href="@{/publicaciones/editar/{id}(id=${p.id})}">Editar</a>
-                </div>
-                <div class="accion-item">
+                	<div class="accion-item">
+					<a class="boton" th:href="@{/publicaciones/{id}/historial-estados(id=${p.id})}">Historial</a>
+					</div>	
+					<div class="accion-item">
+                    <a class="boton boton-editar" th:href="@{/publicaciones/editar/{id}(id=${p.id})}">Editar</a>					
+               		 </div>				
+					<div class="accion-item">
                     <form th:action="@{/publicaciones/eliminar/{id}(id=${p.id})}" method="post"
                           onclick="return confirm('¿Está seguro de dar de baja esta publicación?');">
                         <button type="submit" class="boton-eliminar">Eliminar</button>

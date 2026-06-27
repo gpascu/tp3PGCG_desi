@@ -122,6 +122,13 @@ public class PublicacionServiceImpl implements PublicacionService {
 	public Publicacion buscarPorId(Long id) {
 		return publicacionRepo.findById(id).orElse(null);
 	}
+	
+	//Implementaicon de historial de publicaciones
+	@Override
+	public List<HistorialEstadoPublicacion> listarHistorialEstados(Long publicacionId) {
+	    buscarPorId(publicacionId);
+	    return historialRepo.findByPublicacionIdOrderByFechaHoraDesc(publicacionId);
+	}
 
 	@Override
 	public void finalizarPublicacionesDePropiedad(Long propiedadId) {
