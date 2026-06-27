@@ -642,3 +642,14 @@ form:first-of-type select {
 .boton-historial:hover {
     background: #374151;
 }
+
+/*para no hacer salir tabla del contenedor*/
+.tabla-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabla-wrapper table {
+  min-width: 100%;
+  border-collapse: collapse;
+}
