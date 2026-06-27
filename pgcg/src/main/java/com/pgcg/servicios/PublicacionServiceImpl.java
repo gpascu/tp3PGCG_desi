@@ -79,10 +79,16 @@ public class PublicacionServiceImpl implements PublicacionService {
             Publicacion existente = publicacionRepo.findById(publicacion.getId())
                     .orElseThrow(() -> new RuntimeException("Error: No existe la publicación a editar."));
 
-            // No se puede reactivar una publicación finalizada
-            if (existente.getEstado() == EstadoPublicacion.FINALIZADA
-                    && publicacion.getEstado() != EstadoPublicacion.FINALIZADA) {
-                throw new RuntimeException("Error: No se puede reactivar una publicación finalizada.");
+            // No se puede editar una publicación finalizada
+            if (existente.getEstado() == EstadoPublicacion.FINALIZADA) {
+                throw new RuntimeException("Error: No se puede modificar una publicación que ya se encuentra FINALIZADA.");
+            }
+            
+            // Vuelvo a chequear disponibilidad de la prop para cambio de estado
+            if (publicacion.getEstado() == EstadoPublicacion.ACTIVA) {
+                if (propiedadReal.getEstadoDisponibilidad() != EstadoDisponibilidad.DISPONIBLE) {
+                    throw new RuntimeException("Error: No se puede activar la publicación. La propiedad asociada no se encuentra en estado DISPONIBLE.");
+                } 
             }
             // No dejar dos publicaciones ACTIVAS de la misma propiedad
             if (publicacion.getEstado() == EstadoPublicacion.ACTIVA
